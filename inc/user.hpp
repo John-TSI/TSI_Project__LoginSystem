@@ -10,9 +10,22 @@ namespace _LS // LoginSystem
 
     class User
     {
-        string username{};
-        string password{};
-        string message{};
+        string username{}, password{}, message{};
+        bool isAdmin{false};
+
+        public:
+            // --- constructor ---
+            User(string, string);
+
+            // --- getters/setters ---
+            const string GetUsername();
+            void SetUsername(const string&);
+            const string GetPassword();
+            void SetPassword(const string&);
+            const string GetMessage();
+            void SetMessage(const string&);
+            const bool GetIsAdmin();
+            void SetIsAdmin(const bool&);
     };
 }
 
