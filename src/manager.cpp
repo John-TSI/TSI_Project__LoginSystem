@@ -4,9 +4,17 @@
 #include"../inc/manager.hpp"
 
 
-// --- user request ---
-const int _LS::AccountManager::GetUserRequest()
+// --- constructor ---
+_LS::AccountManager::AccountManager() // creates an admin account on construction
 {
+    userVec.push_back( std::make_unique<User>("admin", "passw0rd", true) );
+}
+
+
+// --- unknown user request ---
+const int _LS::AccountManager::GetUnknownUserRequest()
+{
+    //printf("\033c"); // clears console
     std::cout << "\nPlease make a selection:\n";
     std::cout << "--------------------------------------\n";
     std::cout << "1 ...... Create a new account\n";
@@ -19,7 +27,7 @@ const int _LS::AccountManager::GetUserRequest()
     return request;
 }
 
-void _LS::AccountManager::ProcessUserRequest(const int req)
+void _LS::AccountManager::ProcessUnknownUserRequest(const int req)
 {
     switch(req)
     {
@@ -75,7 +83,8 @@ void _LS::AccountManager::CreateAccount()
     string newUsername = CreateUsername();
     string newPassword = CreatePassword();
     //name_password_map[newUsername] = newPassword;
-    userVec.push_back( std::make_unique<User>(newUsername, newPassword) );
+    userVec.push_back( std::make_unique<User>(newUsername, newPassword, false) );
+    printf("\033c");
     std::cout << "Your account has been created successfully.\n";
     std::cout << "Log in to your account to create a message.\n";
 }
@@ -93,6 +102,12 @@ const std::string _LS::AccountManager::RequestUsername()
     return username;
 }
 
+bool _LS::AccountManager::VerifyUsername(const string& username)
+{
+    auto it = userVec.begin() + FindUserIndex(username);
+    return ( it != userVec.end() ); 
+}
+
 const std::string _LS::AccountManager::RequestPassword()
 {
     std::cout << "Enter your password:\n> ";
@@ -101,12 +116,6 @@ const std::string _LS::AccountManager::RequestPassword()
     std::replace(password.begin(), password.end(), ' ', '_');
     std::cout << '\n';
     return password;
-}
-
-bool _LS::AccountManager::VerifyUsername(const string& username)
-{
-    auto it = userVec.begin() + FindUserIndex(username);
-    return ( it != userVec.end() ); 
 }
 
 bool _LS::AccountManager::VerifyPassword(const string& username, const string& password)
@@ -120,33 +129,90 @@ void _LS::AccountManager::LogIn()
     string username = RequestUsername();
     if(!VerifyUsername(username))
     {
+        printf("\033c");
         std::cout << "Username not recognised.\nCheck your input and try again, or create an account.\n";
         return;
     } 
     string password = RequestPassword();
     if(!VerifyPassword(username, password))
     {
+        printf("\033c");
         std::cout << "Input does not match the stored password for this user.\nCheck your input and try again.\n";
         return;
     }
+    printf("\033c");
     std::cout << "Login successful.\n";
+    loginSuccessful = true;
+    currentUser_username = username;
+}
+
+
+// --- known user request ---
+const int _LS::AccountManager::GetKnownUserRequest()
+{
+    //printf("\033c");
+    std::cout << "\nPlease make a selection:\n";
+    std::cout << "--------------------------------------\n";
+    std::cout << "1 ...... Create a new message\n";
+    std::cout << "2 ...... Retrieve your message\n";
+    std::cout << "0 ...... Return to the login menu\n";
+    std::cout << "--------------------------------------\n> ";
+    int request{0};
+    std::cin >> request;
+    std::cout << '\n';
+    return request;
+}
+
+void _LS::AccountManager::ProcessKnownUserRequest(const int req)
+{
+    switch(req)
+    {
+        case 1:
+        {
+            CreateMessage();
+            break;
+        }
+        case 2:
+        {
+            RetrieveMessage();
+            break;
+        }
+        case 0:
+        {
+            printf("\033c");
+            loginSuccessful = false;
+            currentUser_username = "";
+            break;
+        }
+        default:
+        {
+            std::cout << "Invalid input, review the options and try again.\n";
+        }
+    }
 }
 
 
 // --- message ---
-void _LS::AccountManager::CreateMessage(const string& username)
+void _LS::AccountManager::CreateMessage()
 {
+    printf("\033c");
     std::cout << "Create a secret message:\n> ";
     string message{};
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, message);
 
-    auto it = userVec.begin();
-    while(it!=userVec.end())
-    {
-        const unique_ptr<User>& u_ptr = *it;
-        if(u_ptr->GetUsername() == username) { u_ptr->SetMessage(message); }
-        ++it;
-    }
+    auto it = userVec.begin() + FindUserIndex(currentUser_username);
+    (*it)->SetMessage(message);
+    printf("\033c");
+    std::cout << "Your secret message has been saved.\n";
+}
+
+void _LS::AccountManager::RetrieveMessage()
+{
+    printf("\033c");
+    std::cout << "Your secret message:\n";
+    auto it = userVec.begin() + FindUserIndex(currentUser_username);
+    std::cout << (*it)->GetMessage() << '\n';
 }
 
 
@@ -160,31 +226,24 @@ int _LS::AccountManager::FindUserIndex(const string& username)
     return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
 }
 
-void _LS::AccountManager::PrintNamesPasswords()
-{
-    for(auto& user : userVec)
-    {
-        std::cout << "Name: " << user->GetUsername() << " Password: " << user->GetPassword() << "\n";
-    }
-}
-
-void _LS::AccountManager::PrintNamesMessages()
-{
-    for(auto& user : userVec)
-    {
-        std::cout << "Name: " << user->GetUsername() << "\n";
-        std::cout << "Message: " << user->GetMessage() << "\n";
-    }
-}
-
 
 // --- run ---
 void _LS::AccountManager::Run()
 {
-    int request = -1;
-    while(request != 0)
+    int request1 = -1;
+    while(request1 != 0)
     {
-        request = GetUserRequest();
-        ProcessUserRequest(request);
+        request1 = GetUnknownUserRequest();
+        ProcessUnknownUserRequest(request1);
+
+        if(loginSuccessful)
+        {
+            int request2 = -1;
+            while(request2 != 0)
+            {
+                request2 = GetKnownUserRequest();
+                ProcessKnownUserRequest(request2);
+            }
+        }
     }
 }

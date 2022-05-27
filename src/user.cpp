@@ -2,7 +2,7 @@
 
 
 // --- constructor ---
-_LS::User::User(string u, string p) : username(u), password(p) {}
+_LS::User::User(const string& u, const string& p, const bool& a) : username(u), password(p), isAdmin(a) {}
 
 
 // --- getters/setters ---

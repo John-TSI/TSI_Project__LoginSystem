@@ -11,11 +11,11 @@ namespace _LS // LoginSystem
     class User
     {
         string username{}, password{}, message{};
-        bool isAdmin{false};
+        bool isAdmin{false}, isLocked{false};
 
         public:
             // --- constructor ---
-            User(string, string);
+            User(const string&, const string&, const bool&);
 
             // --- getters/setters ---
             const string GetUsername();

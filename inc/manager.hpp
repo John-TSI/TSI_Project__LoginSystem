@@ -15,11 +15,16 @@ namespace _LS // LoginSystem
     class AccountManager
     {
         vector<unique_ptr<User>> userVec{};
+        bool loginSuccessful{false};
+        string currentUser_username{};
 
         public:
-            // --- user request ---
-            const int GetUserRequest();
-            void ProcessUserRequest(const int);
+            // --- constructor ---
+            AccountManager();
+
+            // --- unknown user request ---
+            const int GetUnknownUserRequest();
+            void ProcessUnknownUserRequest(const int);
 
             // --- create account ---
             const string CreateUsername();
@@ -28,21 +33,23 @@ namespace _LS // LoginSystem
 
             // --- log in ---
             const string RequestUsername();
-            const string RequestPassword();
             bool VerifyUsername(const string&);
+            const string RequestPassword();
             bool VerifyPassword(const string&, const string&);
             void LogIn();
 
+            // --- known user request ---
+            const int GetKnownUserRequest();
+            void ProcessKnownUserRequest(const int);
+
             // --- message ---
-            void CreateMessage(const string&);
+            void CreateMessage();
             void RetrieveMessage();
 
             // --- admin ---
 
             // --- utility ---
             int FindUserIndex(const string&);
-            void PrintNamesPasswords(); // TEST
-            void PrintNamesMessages(); // TEST
 
             // --- run ---
             void Run();
