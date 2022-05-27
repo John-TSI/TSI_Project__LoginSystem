@@ -30,7 +30,7 @@ void _LS::AccountManager::ProcessUserRequest(const int req)
         }
         case 2:
         {
-            //LogIn();
+            LogIn();
             break;
         }
         case 0:
@@ -53,7 +53,7 @@ const std::string _LS::AccountManager::CreateUsername()
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, username);
     std::replace(username.begin(), username.end(), ' ', '_');
-    // verify if already exists
+    // verify does not already exist
     // verify is suitable (e.g. contains a number)
     std::cout << '\n';
     return username;
@@ -81,12 +81,59 @@ void _LS::AccountManager::CreateAccount()
 }
 
 
-// --- existing account ---
-void LogIn()
+// --- log in ---
+const std::string _LS::AccountManager::RequestUsername()
 {
-    
+    std::cout << "Enter your username:\n> ";
+    string username{};
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(std::cin, username);
+    std::replace(username.begin(), username.end(), ' ', '_');
+    std::cout << '\n';
+    return username;
 }
 
+const std::string _LS::AccountManager::RequestPassword()
+{
+    std::cout << "Enter your password:\n> ";
+    string password{};
+    std::getline(std::cin, password);
+    std::replace(password.begin(), password.end(), ' ', '_');
+    std::cout << '\n';
+    return password;
+}
+
+bool _LS::AccountManager::VerifyUsername(const string& username)
+{
+    auto it = userVec.begin() + FindUserIndex(username);
+    return ( it != userVec.end() ); 
+}
+
+bool _LS::AccountManager::VerifyPassword(const string& username, const string& password)
+{
+    auto it = userVec.begin() + FindUserIndex(username);
+    return ((*it)->GetPassword() == password); 
+}
+
+void _LS::AccountManager::LogIn()
+{
+    string username = RequestUsername();
+    if(!VerifyUsername(username))
+    {
+        std::cout << "Username not recognised.\nCheck your input and try again, or create an account.\n";
+        return;
+    } 
+    string password = RequestPassword();
+    if(!VerifyPassword(username, password))
+    {
+        std::cout << "Input does not match the stored password for this user.\nCheck your input and try again.\n";
+        return;
+    }
+    std::cout << "Login successful.\n";
+}
+
+
+// --- message ---
 void _LS::AccountManager::CreateMessage(const string& username)
 {
     std::cout << "Create a secret message:\n> ";
@@ -103,7 +150,16 @@ void _LS::AccountManager::CreateMessage(const string& username)
 }
 
 
+// --- admin ---
+
+
 // --- utility ---
+int _LS::AccountManager::FindUserIndex(const string& username)
+{
+    auto is_user = [&](unique_ptr<User>& u_ptr){ return (u_ptr->GetUsername() == username); };
+    return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
+}
+
 void _LS::AccountManager::PrintNamesPasswords()
 {
     for(auto& user : userVec)
@@ -131,10 +187,4 @@ void _LS::AccountManager::Run()
         request = GetUserRequest();
         ProcessUserRequest(request);
     }
-
-    //int request = GetUserRequest();
-    //ProcessUserRequest(request);
-/*     CreateMessage("jim"); // TEST
-    PrintNamesPasswords();
-    PrintNamesMessages(); */
 }
