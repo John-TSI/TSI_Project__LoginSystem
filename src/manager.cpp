@@ -144,11 +144,14 @@ void _LS::AccountManager::LogIn()
     std::cout << "Login successful.\n";
     loginSuccessful = true;
     currentUser_username = username;
+    // TEST
+    auto it = userVec.begin() + FindUserIndex(username);
+    currentUser = *(*it);
 }
 
 
-// --- known user request ---
-const int _LS::AccountManager::GetKnownUserRequest()
+// --- user request ---
+const int _LS::AccountManager::GetUserRequest()
 {
     //printf("\033c");
     std::cout << "\nPlease make a selection:\n";
@@ -163,7 +166,7 @@ const int _LS::AccountManager::GetKnownUserRequest()
     return request;
 }
 
-void _LS::AccountManager::ProcessKnownUserRequest(const int req)
+void _LS::AccountManager::ProcessUserRequest(const int req)
 {
     switch(req)
     {
@@ -216,7 +219,61 @@ void _LS::AccountManager::RetrieveMessage()
 }
 
 
-// --- admin ---
+// --- admin request ---
+const int _LS::AccountManager::GetAdminRequest()
+{
+    //printf("\033c");
+    std::cout << "\nPlease make a selection:\n";
+    std::cout << "--------------------------------------\n";
+    std::cout << "1 ...... View all users\n";
+    std::cout << "2 ...... Delete a user\n";
+    std::cout << "0 ...... Return to the login menu\n";
+    std::cout << "--------------------------------------\n> ";
+    int request{0};
+    std::cin >> request;
+    std::cout << '\n';
+    return request;
+}
+
+void _LS::AccountManager::ProcessAdminRequest(const int req)
+{
+    switch(req)
+    {
+        case 1:
+        {
+            ViewUsers();
+            break;
+        }
+        case 2:
+        {
+            DeleteUser();
+            break;
+        }
+        case 0:
+        {
+            printf("\033c");
+            loginSuccessful = false;
+            currentUser_username = "";
+            break;
+        }
+        default:
+        {
+            std::cout << "Invalid input, review the options and try again.\n";
+        }
+    }
+}
+
+
+// --- admin tasks ---
+void _LS::AccountManager::ViewUsers()
+{
+
+}
+
+void _LS::AccountManager::DeleteUser()
+{
+
+}
 
 
 // --- utility ---
@@ -241,8 +298,8 @@ void _LS::AccountManager::Run()
             int request2 = -1;
             while(request2 != 0)
             {
-                request2 = GetKnownUserRequest();
-                ProcessKnownUserRequest(request2);
+                request2 = GetUserRequest();
+                ProcessUserRequest(request2);
             }
         }
     }

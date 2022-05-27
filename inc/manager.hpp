@@ -17,6 +17,8 @@ namespace _LS // LoginSystem
         vector<unique_ptr<User>> userVec{};
         bool loginSuccessful{false};
         string currentUser_username{};
+        bool currentUser_isAdmin{false};
+        User currentUser{};
 
         public:
             // --- constructor ---
@@ -38,15 +40,21 @@ namespace _LS // LoginSystem
             bool VerifyPassword(const string&, const string&);
             void LogIn();
 
-            // --- known user request ---
-            const int GetKnownUserRequest();
-            void ProcessKnownUserRequest(const int);
+            // --- user request ---
+            const int GetUserRequest();
+            void ProcessUserRequest(const int);
 
             // --- message ---
             void CreateMessage();
             void RetrieveMessage();
 
-            // --- admin ---
+            // --- admin request ---
+            const int GetAdminRequest();
+            void ProcessAdminRequest(const int);
+
+            // --- admin tasks ---
+            void ViewUsers();
+            void DeleteUser();
 
             // --- utility ---
             int FindUserIndex(const string&);

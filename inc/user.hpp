@@ -14,7 +14,8 @@ namespace _LS // LoginSystem
         bool isAdmin{false}, isLocked{false};
 
         public:
-            // --- constructor ---
+            // --- constructors ---
+            User();
             User(const string&, const string&, const bool&);
 
             // --- getters/setters ---

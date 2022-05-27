@@ -1,7 +1,8 @@
 #include"../inc/user.hpp"
 
 
-// --- constructor ---
+// --- constructors ---
+_LS::User::User() {};
 _LS::User::User(const string& u, const string& p, const bool& a) : username(u), password(p), isAdmin(a) {}
 
 
