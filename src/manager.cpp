@@ -82,7 +82,6 @@ void _LS::AccountManager::CreateAccount()
 {
     string newUsername = CreateUsername();
     string newPassword = CreatePassword();
-    //name_password_map[newUsername] = newPassword;
     userVec.push_back( std::make_unique<User>(newUsername, newPassword, false) );
     printf("\033c");
     std::cout << "Your account has been created successfully.\n";
@@ -141,10 +140,8 @@ void _LS::AccountManager::LogIn()
         return;
     }
     printf("\033c");
-    std::cout << "Login successful.\n";
+    std::cout << "Credentials accepted.\n";
     loginSuccessful = true;
-    currentUser_username = username;
-    // TEST
     auto it = userVec.begin() + FindUserIndex(username);
     currentUser = *(*it);
 }
@@ -153,7 +150,6 @@ void _LS::AccountManager::LogIn()
 // --- user request ---
 const int _LS::AccountManager::GetUserRequest()
 {
-    //printf("\033c");
     std::cout << "\nPlease make a selection:\n";
     std::cout << "--------------------------------------\n";
     std::cout << "1 ...... Create a new message\n";
@@ -184,7 +180,7 @@ void _LS::AccountManager::ProcessUserRequest(const int req)
         {
             printf("\033c");
             loginSuccessful = false;
-            currentUser_username = "";
+            currentUser = {};
             break;
         }
         default:
@@ -204,7 +200,7 @@ void _LS::AccountManager::CreateMessage()
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, message);
 
-    auto it = userVec.begin() + FindUserIndex(currentUser_username);
+    auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
     (*it)->SetMessage(message);
     printf("\033c");
     std::cout << "Your secret message has been saved.\n";
@@ -214,7 +210,7 @@ void _LS::AccountManager::RetrieveMessage()
 {
     printf("\033c");
     std::cout << "Your secret message:\n";
-    auto it = userVec.begin() + FindUserIndex(currentUser_username);
+    auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
     std::cout << (*it)->GetMessage() << '\n';
 }
 
@@ -222,7 +218,6 @@ void _LS::AccountManager::RetrieveMessage()
 // --- admin request ---
 const int _LS::AccountManager::GetAdminRequest()
 {
-    //printf("\033c");
     std::cout << "\nPlease make a selection:\n";
     std::cout << "--------------------------------------\n";
     std::cout << "1 ...... View all users\n";
@@ -253,7 +248,7 @@ void _LS::AccountManager::ProcessAdminRequest(const int req)
         {
             printf("\033c");
             loginSuccessful = false;
-            currentUser_username = "";
+            currentUser = {};
             break;
         }
         default:
@@ -267,17 +262,37 @@ void _LS::AccountManager::ProcessAdminRequest(const int req)
 // --- admin tasks ---
 void _LS::AccountManager::ViewUsers()
 {
-
+    printf("\033c");
+    std::cout << "USERNAME : PASSWORD\n-------------------\n";
+    for(auto& u_ptr : userVec)
+    {
+        std::cout << u_ptr->GetUsername() << " : " << u_ptr->GetPassword() << '\n';
+    }
+    std::cout << '\n';
 }
 
 void _LS::AccountManager::DeleteUser()
 {
+    std::cout << "Enter the username of the User to be deleted:\n> ";
+    string username{};
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(std::cin, username);
+    std::replace(username.begin(), username.end(), ' ', '_');
 
+    if( userVec.begin() + FindUserIndex(username) == userVec.end() )
+    {
+        printf("\033c");
+        std::cout << "Username not recognised.\nCheck your input and try again.\n";
+        return;
+    }
+ 
+    userVec.erase( userVec.begin() + FindUserIndex(username) );
+    std::cout << "The specified User has been deleted from the system.\n";
 }
 
 
 // --- utility ---
-int _LS::AccountManager::FindUserIndex(const string& username)
+int _LS::AccountManager::FindUserIndex(const string& username) // return vector index of user, found using username
 {
     auto is_user = [&](unique_ptr<User>& u_ptr){ return (u_ptr->GetUsername() == username); };
     return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
@@ -290,16 +305,29 @@ void _LS::AccountManager::Run()
     int request1 = -1;
     while(request1 != 0)
     {
+        // create account / log in
         request1 = GetUnknownUserRequest();
         ProcessUnknownUserRequest(request1);
 
-        if(loginSuccessful)
+        // non-admin user
+        if(loginSuccessful && !currentUser.GetIsAdmin())
         {
             int request2 = -1;
             while(request2 != 0)
             {
                 request2 = GetUserRequest();
                 ProcessUserRequest(request2);
+            }
+        }
+
+        // admin user
+        if(loginSuccessful && currentUser.GetIsAdmin())
+        {
+            int request2 = -1;
+            while(request2 != 0)
+            {
+                request2 = GetAdminRequest();
+                ProcessAdminRequest(request2);
             }
         }
     }

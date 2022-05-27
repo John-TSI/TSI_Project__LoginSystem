@@ -16,8 +16,6 @@ namespace _LS // LoginSystem
     {
         vector<unique_ptr<User>> userVec{};
         bool loginSuccessful{false};
-        string currentUser_username{};
-        bool currentUser_isAdmin{false};
         User currentUser{};
 
         public:
