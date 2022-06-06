@@ -253,12 +253,12 @@ void _LS::AccountManager::ChangePassword()
 const int _LS::AccountManager::GetAdminRequest()
 {
     std::cout << "\nPlease make a selection:\n";
-    std::cout << "--------------------------------------\n";
+    std::cout << "---------------------------------\n";
     std::cout << "1 ...... View all users\n";
     std::cout << "2 ...... Delete a user\n";
     std::cout << "3 ...... View hashed passwords\n";
     std::cout << "0 ...... Return to the login menu\n";
-    std::cout << "--------------------------------------\n> ";
+    std::cout << "---------------------------------\n> ";
     int request{0};
     std::cin >> request;
     std::cout << '\n';
@@ -340,7 +340,7 @@ void _LS::AccountManager::DeleteUser()
 void _LS::AccountManager::ViewHashedPasswords()
 {
     printf("\033c");
-    std::cout << "USERNAME : HASHED PASSWORD\n-------------------\n";
+    std::cout << "USERNAME : HASHED PASSWORD\n--------------------------\n";
     for(auto& [username, hashedPassword] : passwordHashmap)
     {
         std::cout << username << " : " << hashedPassword << '\n';
