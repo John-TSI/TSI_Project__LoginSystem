@@ -330,6 +330,11 @@ int _LS::AccountManager::FindUserIndex(const string& username) // return vector 
     return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
 }
 
+/* size_t _LS::AccountManager::HashPassword(const string& password)
+{
+    return std::hash<string>{}(password);
+} */
+
 
 // --- run ---
 void _LS::AccountManager::Run()

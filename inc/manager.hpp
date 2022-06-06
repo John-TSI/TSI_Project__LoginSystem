@@ -57,6 +57,7 @@ namespace _LS // LoginSystem
 
             // --- utility ---
             int FindUserIndex(const string&);
+            //size_t HashPassword(const string&);
 
             // --- run ---
             void Run();
