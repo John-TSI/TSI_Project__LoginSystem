@@ -154,6 +154,7 @@ const int _LS::AccountManager::GetUserRequest()
     std::cout << "--------------------------------------\n";
     std::cout << "1 ...... Create a new message\n";
     std::cout << "2 ...... Retrieve your message\n";
+    std::cout << "3 ...... Change your password\n";
     std::cout << "0 ...... Return to the login menu\n";
     std::cout << "--------------------------------------\n> ";
     int request{0};
@@ -174,6 +175,11 @@ void _LS::AccountManager::ProcessUserRequest(const int req)
         case 2:
         {
             RetrieveMessage();
+            break;
+        }
+        case 3:
+        {
+            ChangePassword();
             break;
         }
         case 0:
@@ -212,6 +218,25 @@ void _LS::AccountManager::RetrieveMessage()
     std::cout << "Your secret message:\n";
     auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
     std::cout << (*it)->GetMessage() << '\n';
+}
+
+void _LS::AccountManager::ChangePassword()
+{
+    printf("\033c");
+    std::cout << "Enter your new password:\n> ";
+    string newPassword{};
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(std::cin, newPassword);
+
+    auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
+    if( (*it)->GetPassword() == newPassword )
+    {
+        std::cout << "New password cannot be identical to current password.\n";
+        return;
+    }
+    (*it)->SetPassword(newPassword);
+    printf("\033c");
+    std::cout << "Your password has been updated.\n";
 }
 
 

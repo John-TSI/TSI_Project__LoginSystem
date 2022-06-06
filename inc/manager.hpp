@@ -45,6 +45,7 @@ namespace _LS // LoginSystem
             // --- message ---
             void CreateMessage();
             void RetrieveMessage();
+            void ChangePassword();
 
             // --- admin request ---
             const int GetAdminRequest();
