@@ -201,8 +201,6 @@ void _LS::AccountManager::ProcessUserRequest(const int req)
     }
 }
 
-
-// --- message ---
 void _LS::AccountManager::CreateMessage()
 {
     printf("\033c");
@@ -341,7 +339,7 @@ void _LS::AccountManager::ViewHashedPasswords()
 {
     printf("\033c");
     std::cout << "USERNAME : HASHED PASSWORD\n--------------------------\n";
-    for(auto& [username, hashedPassword] : passwordHashmap)
+    for(auto& [username, hashedPassword] : hashedPasswords)
     {
         std::cout << username << " : " << hashedPassword << '\n';
     }
@@ -350,7 +348,8 @@ void _LS::AccountManager::ViewHashedPasswords()
 
 
 // --- utility ---
-int _LS::AccountManager::FindUserIndex(const string& username) // return vector index of user, found using username
+// returns vector index of user with specified username
+int _LS::AccountManager::FindUserIndex(const string& username)
 {
     auto is_user = [&](unique_ptr<User>& u_ptr){ return (u_ptr->GetUsername() == username); };
     return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
@@ -363,7 +362,7 @@ size_t _LS::AccountManager::HashPassword(const string& password)
 
 void _LS::AccountManager::AppendHashedPassword(const string& username, const size_t& hashedPassword)
 {
-    passwordHashmap.insert( {username, hashedPassword} );
+    hashedPasswords.insert( {username, hashedPassword} );
 }
 
 

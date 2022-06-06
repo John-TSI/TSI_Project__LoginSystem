@@ -1,10 +1,8 @@
 #ifndef MANAGER_HPP
 #define MANAGER_HPP
 
-//#include<vector>
 #include<unordered_map>
 #include<memory>
-#include<string>
 #include"user.hpp"
 
 
@@ -19,7 +17,7 @@ namespace _LS // LoginSystem
         bool loginSuccessful{false};
         User currentUser{};
 
-        unordered_map<string, size_t> passwordHashmap{};
+        unordered_map<string, size_t> hashedPasswords{};
 
         public:
             // --- constructor ---
@@ -45,7 +43,6 @@ namespace _LS // LoginSystem
             const int GetUserRequest();
             void ProcessUserRequest(const int);
 
-            // --- message ---
             void CreateMessage();
             void RetrieveMessage();
             void ChangePassword();

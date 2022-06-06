@@ -14,7 +14,7 @@ namespace _LS // LoginSystem
     {
         string username{}, password{}, message{};
         vector<string> previousPasswords{};
-        bool isAdmin{false}, isLocked{false};
+        bool isAdmin{false};
 
         public:
             // --- constructors ---
