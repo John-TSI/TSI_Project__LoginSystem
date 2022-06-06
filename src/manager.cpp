@@ -144,6 +144,9 @@ void _LS::AccountManager::LogIn()
     loginSuccessful = true;
     auto it = userVec.begin() + FindUserIndex(username);
     currentUser = *(*it);
+
+    // hash and store password
+    AppendHashedPassword( HashPassword(currentUser.GetPassword()) );
 }
 
 
@@ -330,10 +333,15 @@ int _LS::AccountManager::FindUserIndex(const string& username) // return vector 
     return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
 }
 
-/* size_t _LS::AccountManager::HashPassword(const string& password)
+size_t _LS::AccountManager::HashPassword(const string& password)
 {
     return std::hash<string>{}(password);
-} */
+}
+
+void _LS::AccountManager::AppendHashedPassword(const size_t& hashedPassword)
+{
+    passwordHashmap.insert( {currentUser.GetUsername(), hashedPassword} );
+}
 
 
 // --- run ---

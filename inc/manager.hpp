@@ -2,6 +2,7 @@
 #define MANAGER_HPP
 
 #include<vector>
+#include<unordered_map>
 #include<memory>
 #include<string>
 #include"user.hpp"
@@ -10,6 +11,7 @@
 namespace _LS // LoginSystem
 {
     using std::vector;
+    using std::unordered_map;
     using std::unique_ptr;
 
     class AccountManager
@@ -17,6 +19,8 @@ namespace _LS // LoginSystem
         vector<unique_ptr<User>> userVec{};
         bool loginSuccessful{false};
         User currentUser{};
+
+        unordered_map<string, size_t> passwordHashmap{};
 
         public:
             // --- constructor ---
@@ -57,7 +61,8 @@ namespace _LS // LoginSystem
 
             // --- utility ---
             int FindUserIndex(const string&);
-            //size_t HashPassword(const string&);
+            size_t HashPassword(const string&);
+            void AppendHashedPassword(const size_t&);
 
             // --- run ---
             void Run();
