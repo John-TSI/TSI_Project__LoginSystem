@@ -279,6 +279,13 @@ void _LS::AccountManager::DeleteUser()
     std::getline(std::cin, username);
     std::replace(username.begin(), username.end(), ' ', '_');
 
+    // prevent deletion of user account
+    if(username == "admin")
+    {
+        std::cout << "Cannot delete admin account.\n";
+        return;
+    }
+
     if( userVec.begin() + FindUserIndex(username) == userVec.end() )
     {
         printf("\033c");
