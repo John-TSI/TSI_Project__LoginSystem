@@ -83,6 +83,10 @@ void _LS::AccountManager::CreateAccount()
     string newUsername = CreateUsername();
     string newPassword = CreatePassword();
     userVec.push_back( std::make_unique<User>(newUsername, newPassword, false) );
+
+    // hash and store password
+    AppendHashedPassword( HashPassword(currentUser.GetPassword()) );
+
     printf("\033c");
     std::cout << "Your account has been created successfully.\n";
     std::cout << "Log in to your account to create a message.\n";
@@ -144,9 +148,6 @@ void _LS::AccountManager::LogIn()
     loginSuccessful = true;
     auto it = userVec.begin() + FindUserIndex(username);
     currentUser = *(*it);
-
-    // hash and store password
-    AppendHashedPassword( HashPassword(currentUser.GetPassword()) );
 }
 
 
