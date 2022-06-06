@@ -85,7 +85,7 @@ void _LS::AccountManager::CreateAccount()
     userVec.push_back( std::make_unique<User>(newUsername, newPassword, false) );
 
     // hash and store password
-    AppendHashedPassword( HashPassword(currentUser.GetPassword()) );
+    AppendHashedPassword( newUsername, HashPassword(newPassword) );
 
     printf("\033c");
     std::cout << "Your account has been created successfully.\n";
@@ -356,9 +356,9 @@ size_t _LS::AccountManager::HashPassword(const string& password)
     return std::hash<string>{}(password);
 }
 
-void _LS::AccountManager::AppendHashedPassword(const size_t& hashedPassword)
+void _LS::AccountManager::AppendHashedPassword(const string& username, const size_t& hashedPassword)
 {
-    passwordHashmap.insert( {currentUser.GetUsername(), hashedPassword} );
+    passwordHashmap.insert( {username, hashedPassword} );
 }
 
 
