@@ -250,6 +250,7 @@ const int _LS::AccountManager::GetAdminRequest()
     std::cout << "--------------------------------------\n";
     std::cout << "1 ...... View all users\n";
     std::cout << "2 ...... Delete a user\n";
+    std::cout << "3 ...... View hashed passwords\n";
     std::cout << "0 ...... Return to the login menu\n";
     std::cout << "--------------------------------------\n> ";
     int request{0};
@@ -270,6 +271,11 @@ void _LS::AccountManager::ProcessAdminRequest(const int req)
         case 2:
         {
             DeleteUser();
+            break;
+        }
+        case 3:
+        {
+            ViewHashedPasswords();
             break;
         }
         case 0:
@@ -323,6 +329,17 @@ void _LS::AccountManager::DeleteUser()
  
     userVec.erase( userVec.begin() + FindUserIndex(username) );
     std::cout << "The specified User has been deleted from the system.\n";
+}
+
+void _LS::AccountManager::ViewHashedPasswords()
+{
+    printf("\033c");
+    std::cout << "USERNAME : HASHED PASSWORD\n-------------------\n";
+    for(auto& [username, hashedPassword] : passwordHashmap)
+    {
+        std::cout << username << " : " << hashedPassword << '\n';
+    }
+    std::cout << '\n';
 }
 
 

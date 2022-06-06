@@ -58,6 +58,7 @@ namespace _LS // LoginSystem
             // --- admin tasks ---
             void ViewUsers();
             void DeleteUser();
+            void ViewHashedPasswords();
 
             // --- utility ---
             int FindUserIndex(const string&);
