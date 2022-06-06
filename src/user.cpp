@@ -11,6 +11,7 @@ const std::string _LS::User::GetUsername() { return username; }
 void _LS::User::SetUsername(const string& input) { username = input; }
 const std::string _LS::User::GetPassword() { return password; }
 void _LS::User::SetPassword(const string& input) { password = input; }
+std::vector<std::string>& _LS::User::GetPreviousPasswords() { return previousPasswords; }
 const std::string _LS::User::GetMessage() { return message; }
 void _LS::User::SetMessage(const string& input) { message = input; }
 const bool _LS::User::GetIsAdmin() { return isAdmin; }

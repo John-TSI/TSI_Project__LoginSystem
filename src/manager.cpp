@@ -84,8 +84,9 @@ void _LS::AccountManager::CreateAccount()
     string newPassword = CreatePassword();
     userVec.push_back( std::make_unique<User>(newUsername, newPassword, false) );
 
-    // hash and store password
+    // hash and store password, add to User's previous passwords
     AppendHashedPassword( newUsername, HashPassword(newPassword) );
+    userVec.back()->GetPreviousPasswords().push_back(newPassword);
 
     printf("\033c");
     std::cout << "Your account has been created successfully.\n";
@@ -233,11 +234,15 @@ void _LS::AccountManager::ChangePassword()
     std::getline(std::cin, newPassword);
 
     auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
-    if( (*it)->GetPassword() == newPassword )
+    for(auto& oldPassword : (*it)->GetPreviousPasswords() )
     {
-        std::cout << "New password cannot be identical to current password.\n";
-        return;
+        if(newPassword == oldPassword)
+        {
+            std::cout << "New password cannot be identical to a previously stored password.\n";
+            return;
+        }
     }
+
     (*it)->SetPassword(newPassword);
     printf("\033c");
     std::cout << "Your password has been updated.\n";

@@ -1,7 +1,7 @@
 #ifndef MANAGER_HPP
 #define MANAGER_HPP
 
-#include<vector>
+//#include<vector>
 #include<unordered_map>
 #include<memory>
 #include<string>
@@ -10,7 +10,7 @@
 
 namespace _LS // LoginSystem
 {
-    using std::vector;
+    //using std::vector;
     using std::unordered_map;
     using std::unique_ptr;
 

@@ -2,15 +2,18 @@
 #define USER_HPP
 
 #include<string>
+#include<vector>
 
 
 namespace _LS // LoginSystem
 {
     using std::string;
+    using std::vector;
 
     class User
     {
         string username{}, password{}, message{};
+        vector<string> previousPasswords{};
         bool isAdmin{false}, isLocked{false};
 
         public:
@@ -23,6 +26,7 @@ namespace _LS // LoginSystem
             void SetUsername(const string&);
             const string GetPassword();
             void SetPassword(const string&);
+            vector<string>& GetPreviousPasswords();
             const string GetMessage();
             void SetMessage(const string&);
             const bool GetIsAdmin();
