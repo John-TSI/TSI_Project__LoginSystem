@@ -332,6 +332,7 @@ void _LS::AccountManager::DeleteUser()
     }
  
     userVec.erase( userVec.begin() + FindUserIndex(username) );
+    hashedPasswords.erase(username);
     std::cout << "The specified User has been deleted from the system.\n";
 }
 
