@@ -10,6 +10,7 @@ namespace _LS // LoginSystem
 {
     using std::unordered_map;
     using std::unique_ptr;
+    using UVec = vector<unique_ptr<User>>;
 
     class AccountManager
     {
@@ -57,7 +58,7 @@ namespace _LS // LoginSystem
             void ViewHashedPasswords();
 
             // --- utility ---
-            int FindUserIndex(const string&);
+            UVec::iterator FindUser(const string&);
             size_t HashPassword(const string&);
             void AppendHashedPassword(const string&, const size_t&);
 

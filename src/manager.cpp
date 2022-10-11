@@ -108,8 +108,7 @@ const std::string _LS::AccountManager::RequestUsername()
 
 bool _LS::AccountManager::VerifyUsername(const string& username)
 {
-    auto it = userVec.begin() + FindUserIndex(username);
-    return ( it != userVec.end() ); 
+    return ( FindUser(username) != userVec.end() ); 
 }
 
 const std::string _LS::AccountManager::RequestPassword()
@@ -124,8 +123,7 @@ const std::string _LS::AccountManager::RequestPassword()
 
 bool _LS::AccountManager::VerifyPassword(const string& username, const string& password)
 {
-    auto it = userVec.begin() + FindUserIndex(username);
-    return ((*it)->GetPassword() == password); 
+    return ( (*FindUser(username))->GetPassword() == password ); 
 }
 
 void _LS::AccountManager::LogIn()
@@ -147,8 +145,7 @@ void _LS::AccountManager::LogIn()
     printf("\033c");
     std::cout << "Credentials accepted.\n";
     loginSuccessful = true;
-    auto it = userVec.begin() + FindUserIndex(username);
-    currentUser = *(*it);
+    currentUser = *(*FindUser(username));
 }
 
 
@@ -209,7 +206,7 @@ void _LS::AccountManager::CreateMessage()
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, message);
 
-    auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
+    auto it = FindUser(currentUser.GetUsername());
     (*it)->SetMessage(message);
     printf("\033c");
     std::cout << "Your secret message has been saved.\n";
@@ -219,7 +216,7 @@ void _LS::AccountManager::RetrieveMessage()
 {
     printf("\033c");
     std::cout << "Your secret message:\n";
-    auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
+    auto it = FindUser(currentUser.GetUsername());
     std::cout << (*it)->GetMessage() << '\n';
 }
 
@@ -231,8 +228,8 @@ void _LS::AccountManager::ChangePassword()
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, newPassword);
 
-    auto it = userVec.begin() + FindUserIndex(currentUser.GetUsername());
-    for(auto& oldPassword : (*it)->GetPreviousPasswords() )
+    auto it = FindUser(currentUser.GetUsername());
+    for(auto& oldPassword : (*it)->GetPreviousPasswords())
     {
         if(newPassword == oldPassword)
         {
@@ -317,21 +314,21 @@ void _LS::AccountManager::DeleteUser()
     std::getline(std::cin, username);
     std::replace(username.begin(), username.end(), ' ', '_');
 
-    // prevent deletion of user account
+    // prevent deletion of admin account
     if(username == "admin")
     {
         std::cout << "Cannot delete admin account.\n";
         return;
     }
 
-    if( userVec.begin() + FindUserIndex(username) == userVec.end() )
+    if( FindUser(username) == userVec.end() )
     {
         printf("\033c");
         std::cout << "Username not recognised.\nCheck your input and try again.\n";
         return;
     }
  
-    userVec.erase( userVec.begin() + FindUserIndex(username) );
+    userVec.erase( FindUser(username) );
     hashedPasswords.erase(username);
     std::cout << "The specified User has been deleted from the system.\n";
 }
@@ -349,11 +346,10 @@ void _LS::AccountManager::ViewHashedPasswords()
 
 
 // --- utility ---
-// returns vector index of user with specified username
-int _LS::AccountManager::FindUserIndex(const string& username)
+_LS::UVec::iterator _LS::AccountManager::FindUser(const string& username)
 {
     auto is_user = [&](unique_ptr<User>& u_ptr){ return (u_ptr->GetUsername() == username); };
-    return std::find_if( userVec.begin(), userVec.end(), is_user ) - userVec.begin();
+    return std::find_if( userVec.begin(), userVec.end(), is_user );
 }
 
 size_t _LS::AccountManager::HashPassword(const string& password)
