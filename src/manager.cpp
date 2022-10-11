@@ -56,12 +56,25 @@ void _LS::AccountManager::ProcessUnknownUserRequest(const int req)
 // --- create account ---
 const std::string _LS::AccountManager::CreateUsername()
 {
-    std::cout << "Create a username:\n> ";
     string username{};
+    bool validUsername{false};
+    while(!validUsername)
+    {
+    std::cout << "Create a username:\n> ";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::getline(std::cin, username);
     std::replace(username.begin(), username.end(), ' ', '_');
-    // verify does not already exist
+
+    
+    if( FindUser(username) != userVec.end() )  // verify does not already exist
+    {
+        printf("\033c");
+        std::cout << "The username is not available, try another.\n\n";
+        username = "";
+        std::cin.putback('\n');  // puts a '\n' char back into input buffer, to trigger end of cin.ignore
+    }
+    else{ validUsername = true; }
+    }
     // verify is suitable (e.g. contains a number)
     std::cout << '\n';
     return username;
@@ -233,12 +246,15 @@ void _LS::AccountManager::ChangePassword()
     {
         if(newPassword == oldPassword)
         {
+            printf("\033c");
             std::cout << "New password cannot be identical to a previously stored password.\n";
             return;
         }
     }
 
     (*it)->SetPassword(newPassword);
+    AppendHashedPassword( currentUser.GetUsername(), HashPassword(newPassword) );
+    userVec.back()->GetPreviousPasswords().push_back(newPassword);
     printf("\033c");
     std::cout << "Your password has been updated.\n";
 }

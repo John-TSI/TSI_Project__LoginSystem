@@ -44,6 +44,7 @@ namespace _LS // LoginSystem
             const int GetUserRequest();
             void ProcessUserRequest(const int);
 
+            // --- user tasks ---
             void CreateMessage();
             void RetrieveMessage();
             void ChangePassword();
