@@ -35,9 +35,9 @@ namespace _LS // LoginSystem
 
             // --- log in ---
             const string RequestUsername();
-            bool VerifyUsername(const string&);
+            bool VerifiedUsername(const string&);
             const string RequestPassword();
-            bool VerifyPassword(const string&, const string&);
+            bool VerifiedPassword(const string&, const string&);
             void LogIn();
 
             // --- user request ---

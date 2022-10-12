@@ -47,6 +47,7 @@ void _LS::AccountManager::ProcessUnknownUserRequest(const int req)
         }
         default:
         {
+            printf("\033c");
             std::cout << "Invalid input, review the options and try again.\n";
         }
     }
@@ -120,7 +121,7 @@ const std::string _LS::AccountManager::RequestUsername()
     return username;
 }
 
-bool _LS::AccountManager::VerifyUsername(const string& username)
+bool _LS::AccountManager::VerifiedUsername(const string& username)
 {
     return ( FindUser(username) != userVec.end() ); 
 }
@@ -135,7 +136,7 @@ const std::string _LS::AccountManager::RequestPassword()
     return password;
 }
 
-bool _LS::AccountManager::VerifyPassword(const string& username, const string& password)
+bool _LS::AccountManager::VerifiedPassword(const string& username, const string& password)
 {
     return ( (*FindUser(username))->GetPassword() == password ); 
 }
@@ -143,14 +144,14 @@ bool _LS::AccountManager::VerifyPassword(const string& username, const string& p
 void _LS::AccountManager::LogIn()
 {
     string username = RequestUsername();
-    if(!VerifyUsername(username))
+    if( !VerifiedUsername(username) )
     {
         printf("\033c");
         std::cout << "Username not recognised.\nCheck your input and try again, or create an account.\n";
         return;
     } 
     string password = RequestPassword();
-    if(!VerifyPassword(username, password))
+    if( !VerifiedPassword(username, password) )
     {
         printf("\033c");
         std::cout << "Input does not match the stored password for this user.\nCheck your input and try again.\n";
@@ -207,6 +208,7 @@ void _LS::AccountManager::ProcessUserRequest(const int req)
         }
         default:
         {
+            printf("\033c");
             std::cout << "Invalid input, review the options and try again.\n";
         }
     }
@@ -229,9 +231,14 @@ void _LS::AccountManager::CreateMessage()
 void _LS::AccountManager::RetrieveMessage()
 {
     printf("\033c");
-    std::cout << "Your secret message:\n";
     auto it = FindUser(currentUser.GetUsername());
-    std::cout << (*it)->GetMessage() << '\n';
+    std::cout << 
+    ( 
+        (*it)->GetMessage().length() < 1
+        ? "You have not yet stored a message."
+        : "Your secret message:\n" + (*it)->GetMessage() 
+    ) 
+    << '\n';
 }
 
 void _LS::AccountManager::ChangePassword()
@@ -312,6 +319,7 @@ void _LS::AccountManager::ProcessAdminRequest(const int req)
         }
         default:
         {
+            printf("\033c");
             std::cout << "Invalid input, review the options and try again.\n";
         }
     }
@@ -338,9 +346,9 @@ void _LS::AccountManager::DeleteUser()
     std::getline(std::cin, username);
     std::replace(username.begin(), username.end(), ' ', '_');
 
-    // prevent deletion of admin account
-    if(username == "admin")
+    if(username == "admin")  // prevent deletion of admin account
     {
+        printf("\033c");
         std::cout << "Cannot delete admin account.\n";
         return;
     }
@@ -354,6 +362,7 @@ void _LS::AccountManager::DeleteUser()
  
     userVec.erase( FindUser(username) );
     hashedPasswords.erase(username);
+    printf("\033c");
     std::cout << "The specified User has been deleted from the system.\n";
 }
 
