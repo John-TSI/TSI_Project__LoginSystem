@@ -57,36 +57,56 @@ void _LS::AccountManager::ProcessUnknownUserRequest(const int req)
 const std::string _LS::AccountManager::CreateUsername()
 {
     string username{};
-    bool validUsername{false};
-    while(!validUsername)
+    bool isValidUsername{false};
+    while(!isValidUsername)
     {
-    std::cout << "Create a username:\n> ";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::getline(std::cin, username);
-    std::replace(username.begin(), username.end(), ' ', '_');
+        std::cout << "Create a username:\n> ";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // clear input buffer
+        std::getline(std::cin, username);
+        std::replace(username.begin(), username.end(), ' ', '_');
 
-    
-    if( FindUser(username) != userVec.end() )  // verify does not already exist
-    {
-        printf("\033c");
-        std::cout << "The username is not available, try another.\n\n";
-        username = "";
-        std::cin.putback('\n');  // puts a '\n' char back into input buffer, to trigger end of cin.ignore
+        if(username.length() < 4)  // verify input length
+        {
+            printf("\033c");
+            std::cout << "Usernames must be at least four characters long.\n\n";
+            // std::getline takes inserted '\n' out of input buffer, causing cin.ignore to disregard user input on next pass
+            // next line puts a '\n' back into buffer to trigger cin.ignore, skipping to std::getline
+            std::cin.putback('\n');
+        }
+        else if( FindUser(username) != userVec.end() )  // verify username does not already exist
+        {
+            printf("\033c");
+            std::cout << "The username is not available, try another.\n\n";
+            std::cin.putback('\n');
+        }
+        else{ isValidUsername = true; }
     }
-    else{ validUsername = true; }
-    }
-    // verify is suitable (e.g. contains a number)
     std::cout << '\n';
     return username;
 }
 
 const std::string _LS::AccountManager::CreatePassword()
 {
-    std::cout << "Create a password:\n> ";
     string password{};
-    std::getline(std::cin, password);
-    std::replace(password.begin(), password.end(), ' ', '_');
-    // verify is suitable (e.g. contains a number)
+    bool isValidPassword{false};
+    while(!isValidPassword)
+    {
+        std::cout << "Create a password:\n> ";
+        std::getline(std::cin, password);
+        std::replace(password.begin(), password.end(), ' ', '_');
+
+        if(password.length() < 4)  // verify input length
+        {
+            printf("\033c");
+            std::cout << "Passwords must be at least four characters long.\n\n";
+        }
+        else if( std::find_if(password.begin(), password.end(), isdigit) == password.end() )  // verify password contains at least one number
+        {
+            printf("\033c");
+            std::cout << "Passwords must contain at least one number.\n\n";
+        }
+        else{ isValidPassword = true; }
+    }
     std::cout << '\n';
     return password;
 }
