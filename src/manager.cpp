@@ -223,9 +223,18 @@ void _LS::AccountManager::CreateMessage()
     std::getline(std::cin, message);
 
     auto it = FindUser(currentUser.GetUsername());
-    (*it)->SetMessage(message);
     printf("\033c");
-    std::cout << "Your secret message has been saved.\n";
+    std::cout << 
+    (
+        message.length() < 1
+        ? ( (*it)->GetMessage().length() < 1 )
+            ? "Empty message detected. No changes have been saved."
+            : "Empty message detected. Your previous message has been deleted."
+        : "Your secret message has been saved."
+    )
+    << '\n';
+
+    (*it)->SetMessage(message);
 }
 
 void _LS::AccountManager::RetrieveMessage()
