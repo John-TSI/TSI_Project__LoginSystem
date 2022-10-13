@@ -1,4 +1,5 @@
 #include<gtest/gtest.h>
+#include<string>
 #include"../inc/manager.hpp"
 
 
@@ -12,6 +13,16 @@ TEST(ManagerConstruction, AdminAccountCreated)
 {
     _LS::AccountManager AM;
     EXPECT_EQ(AM.GetUsers().size(), 1);
+}
+
+TEST(InputValidation, UsernameTooShort)
+{
+    _LS::AccountManager AM;
+    const std::string username{"bad"};
+    //std::cout.rdbuf(nullptr);
+    //fclose(stdout);
+    EXPECT_FALSE(AM.ValidateUsername(username));
+    //std::cout.rdbuf(); 
 }
 
 
