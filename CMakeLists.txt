@@ -12,9 +12,9 @@ add_executable(${PROJECT_NAME} src/main.cpp ${SRC_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC inc)
 
 # ------ target executable: tester ------
+add_library(mainLib STATIC ${SRC_FILES})
 add_executable(tester tests/tests.cpp)
-target_link_libraries(tester PRIVATE gtest_main gmock_main)
-target_include_directories(tester PRIVATE inc)
+target_link_libraries(tester PRIVATE mainLib gtest_main gmock_main)
 
 # -------- GTest --------
 include(FetchContent)

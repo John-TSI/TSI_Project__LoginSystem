@@ -8,6 +8,13 @@ TEST(TrivialTest, BasicAssertions)
 	EXPECT_EQ(7*6, 42);
 }
 
+TEST(ManagerConstruction, AdminAccountCreated)
+{
+    _LS::AccountManager AM;
+    EXPECT_EQ(AM.GetUsers().size(), 1);
+}
+
+
 // ---- gtest driver code ----
 int main(int argc, char* argv[])
 {

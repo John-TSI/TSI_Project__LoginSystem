@@ -480,3 +480,10 @@ void _LS::AccountManager::Run()
         }
     }
 }
+
+
+// --- testing ---
+const std::vector<std::unique_ptr<_LS::User>>& _LS::AccountManager::GetUsers()
+{
+    return userVec;
+}

@@ -67,6 +67,9 @@ namespace _LS // LoginSystem
 
             // --- run ---
             void Run();
+
+            // --- testing ---
+            const vector<unique_ptr<User>>& GetUsers();
     };
 }
 
