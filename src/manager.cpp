@@ -349,6 +349,14 @@ void _LS::AccountManager::ViewUsers()
 
 void _LS::AccountManager::DeleteUser()
 {
+    if(userVec.size() < 2)  // only admin account exists, not deletable.
+    {
+        printf("\033c"); 
+        std::cout << "No deletable user accounts exist on the system.\n"; 
+        return; 
+    }
+
+    printf("\033c");
     std::cout << "Enter the username of the User to be deleted:\n> ";
     string username{};
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
