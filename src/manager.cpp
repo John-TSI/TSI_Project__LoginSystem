@@ -497,7 +497,6 @@ void _LS::AccountManager::Run()
 
 
 // --- testing ---
-const std::vector<std::unique_ptr<_LS::User>>& _LS::AccountManager::GetUsers()
-{
-    return userVec;
-}
+const std::vector<std::unique_ptr<_LS::User>>& _LS::AccountManager::GetUsers(){ return userVec; }
+
+void _LS::AccountManager::AddUser(User& user){ userVec.push_back(std::make_unique<User>(user)); }
