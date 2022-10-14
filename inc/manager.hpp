@@ -62,6 +62,8 @@ namespace _LS // LoginSystem
             UVec::iterator FindUser(const string&);
             bool ValidateUsername(const string&);
             bool ValidatePassword(const string&);
+            void WarnInvalidUsername(const string&);
+            void WarnInvalidPassword(const string&);
             size_t HashPassword(const string&);
             void AppendHashedPassword(const string&, const size_t&);
 
