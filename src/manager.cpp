@@ -68,9 +68,13 @@ const std::string _LS::AccountManager::CreateUsername()
         std::replace(username.begin(), username.end(), ' ', '_');
 
         isValidUsername = ValidateUsername(username);
-        // std::getline takes inserted '\n' out of input buffer, causing cin.ignore to disregard user input on next pass
-        // next line puts a '\n' back into buffer to trigger cin.ignore, skipping to std::getline
-        if(!isValidUsername){ std::cin.putback('\n'); }
+        if(!isValidUsername)
+        { 
+            WarnInvalidUsername(username);
+            // next line puts a '\n' back into buffer to trigger cin.ignore, skipping to std::getline
+            // std::getline takes inserted '\n' out of input buffer, causing cin.ignore to disregard user input on next pass
+            std::cin.putback('\n'); 
+        }
     }
     std::cout << '\n';
     return username;
@@ -88,6 +92,7 @@ const std::string _LS::AccountManager::CreatePassword()
         std::replace(password.begin(), password.end(), ' ', '_');
 
         isValidPassword = ValidatePassword(password);
+        if(!isValidPassword){ WarnInvalidPassword(password); }
     }
     std::cout << '\n';
     return password;
@@ -404,36 +409,45 @@ _LS::UVec::iterator _LS::AccountManager::FindUser(const string& username)
 
 bool _LS::AccountManager::ValidateUsername(const string& username)
 {
-    if(username.length() < 4)  // check input length
-    {
-        printf("\033c");
-        std::cout << "Usernames must be at least four characters long.\n\n";
-        return false;
-    }
-    if( FindUser(username) != userVec.end() )  // check username does not already exist
-    {
-        printf("\033c");
-        std::cout << "The username is not available, try another.\n\n";
-        return false;
-    }
-    return true;
+    // check username is long enough and is available (not already stored in userVec)
+    return !( (username.length() < 4) || (FindUser(username) != userVec.end()) );
 }
 
 bool _LS::AccountManager::ValidatePassword(const string& password)
 {
-    if(password.length() < 4)  // check input length
+    // check password is long enough and contains at least one number
+    return !( (password.length() < 4) ||
+                (std::find_if(password.begin(), password.end(), isdigit) == password.end()) );
+}
+
+void _LS::AccountManager::WarnInvalidUsername(const string& username)
+{
+    printf("\033c");
+    if(username.length() < 4)
+    { 
+        std::cout << "Usernames must be at least four characters long.\n\n";
+        return; 
+    }
+    if( FindUser(username) != userVec.end() )
     {
-        printf("\033c");
+        std::cout << "The username is not available, try another.\n\n";
+        return;
+    }
+}
+
+void _LS::AccountManager::WarnInvalidPassword(const string& password)
+{
+    printf("\033c");
+    if(password.length() < 4)
+    {
         std::cout << "Passwords must be at least four characters long.\n\n";
-        return false;
+        return;
     }
-    if( std::find_if(password.begin(), password.end(), isdigit) == password.end() )  // check password contains at least one number
+    if( std::find_if(password.begin(), password.end(), isdigit) == password.end() )
     {
-        printf("\033c");
         std::cout << "Passwords must contain at least one number.\n\n";
-        return false;
+        return;
     }
-    return true;
 }
 
 size_t _LS::AccountManager::HashPassword(const string& password)
